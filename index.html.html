@@ -1,0 +1,1973 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ดีดนิ้ว Trader Journal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F7FAFD;
+  --bg-2:#EEF3F8;
+  --panel:#FFFFFF;
+  --panel-2:#F5F8FB;
+  --border:#E1E8EF;
+  --border-soft:#EAEFF4;
+  --text:#16324A;
+  --text-dim:#5A7188;
+  --text-faint:#93A6B7;
+  --amber:#C8922E;
+  --amber-soft:rgba(200,146,46,.12);
+  --green:#27966B;
+  --green-soft:rgba(39,150,107,.12);
+  --red:#DD4A3E;
+  --red-soft:rgba(221,74,62,.12);
+  --teal:#C8922E;
+  --teal-soft:rgba(200,146,46,.12);
+  --violet:#7C63C9;
+  --violet-soft:rgba(124,99,201,.12);
+  --brand-blue:#0B4F7E;
+  --brand-blue-2:#073A60;
+  --radius:10px;
+  --font-display:'Space Grotesk', 'Noto Sans Thai', sans-serif;
+  --font-body:'Noto Sans Thai', sans-serif;
+  --font-mono:'JetBrains Mono', monospace;
+}
+*{box-sizing:border-box;}
+html{font-size:18px;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:var(--font-body);}
+body{
+  background:
+    radial-gradient(circle at 14% 0%, rgba(11,79,126,.05), transparent 32%),
+    radial-gradient(circle at 100% 0%, rgba(200,146,46,.06), transparent 30%),
+    var(--bg);
+  min-height:100vh;
+}
+::selection{background:var(--amber-soft); color:var(--amber);}
+button{font-family:inherit; cursor:pointer;}
+input,textarea,select{font-family:inherit;}
+.hidden{display:none !important;}
+.mono{font-family:var(--font-mono);}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar{width:8px; height:8px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border); border-radius:8px;}
+::-webkit-scrollbar-thumb:hover{background:var(--text-faint);}
+
+/* ===== Topbar ===== */
+.topbar{
+  position:sticky; top:0; z-index:20;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 28px;
+  background:linear-gradient(135deg, var(--brand-blue) 0%, var(--brand-blue-2) 100%);
+  box-shadow:0 2px 14px rgba(7,58,96,.18);
+}
+.brand{display:flex; align-items:center; gap:12px;}
+.brand-icon{width:34px; height:34px; flex-shrink:0;}
+.brand-text{display:flex; flex-direction:column; line-height:1.05;}
+.brand-mark{font-family:var(--font-display); font-weight:700; font-size:18px; letter-spacing:.06em; color:#FFFFFF;}
+.brand-mark-2{font-family:var(--font-display); font-weight:500; font-size:12.5px; letter-spacing:.32em; color:#F2D27A; margin-top:2px;}
+.btn{
+  border:1px solid var(--border); background:var(--panel); color:var(--text);
+  padding:10px 18px; border-radius:8px; font-size:16px; font-weight:600;
+  display:inline-flex; align-items:center; gap:8px; transition:.15s ease;
+}
+.btn:hover{border-color:var(--text-faint); background:var(--panel-2);}
+.btn-primary{
+  background:linear-gradient(180deg, #F6E2A0, #E8C158);
+  border:1px solid #E8C158; color:#0B3E63;
+}
+.btn-primary:hover{filter:brightness(1.07);}
+.btn-ghost{background:transparent; border:1px solid transparent; color:var(--text-dim);}
+.btn-ghost:hover{color:var(--text); background:var(--panel);}
+.btn-danger{border:1px solid rgba(226,104,92,.4); color:var(--red); background:rgba(226,104,92,.06);}
+.btn-danger:hover{background:rgba(226,104,92,.14);}
+.btn-sm{padding:7px 12px; font-size:14px; border-radius:7px;}
+
+/* ===== Stats ticker ===== */
+.stats-ticker{
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:1px; background:var(--border-soft);
+  border-bottom:1px solid var(--border-soft);
+  max-width:1180px; margin:0 auto;
+}
+.stat-cell{
+  background:var(--panel); padding:16px 22px;
+}
+.stat-label{font-size:12.5px; letter-spacing:.1em; color:var(--text-faint); text-transform:uppercase; margin-bottom:6px;}
+.stat-value{font-family:var(--font-mono); font-size:25px; font-weight:600; color:var(--text);}
+.stat-value.pos{color:var(--green);}
+.stat-value.neg{color:var(--red);}
+
+/* ===== Filter bar ===== */
+.filter-bar{
+  max-width:1180px; margin:0 auto; padding:18px 28px 6px;
+  display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+}
+.filter-bar input[type=text]{
+  background:var(--panel); border:1px solid var(--border); color:var(--text);
+  padding:9px 13px; border-radius:8px; font-size:15.5px; min-width:200px;
+  box-shadow:0 1px 2px rgba(22,50,74,.04);
+}
+.filter-bar input[type=text]:focus{outline:none; border-color:var(--amber);}
+.seg{display:flex; background:var(--panel); border:1px solid var(--border); border-radius:8px; overflow:hidden; box-shadow:0 1px 2px rgba(22,50,74,.04);}
+.seg button{
+  background:transparent; border:none; color:var(--text-dim); padding:9px 14px; font-size:14.5px; font-weight:500;
+  border-right:1px solid var(--border);
+}
+.seg button:last-child{border-right:none;}
+.seg button.active{background:var(--amber-soft); color:var(--amber);}
+
+/* ===== Timeline ===== */
+.timeline-wrap{max-width:1180px; margin:0 auto; padding:18px 28px 80px; position:relative;}
+.timeline{position:relative; padding-left:34px;}
+.spine{position:absolute; left:9px; top:6px; bottom:6px; width:2px;}
+.entry-card{
+  position:relative; background:var(--panel); border:1px solid var(--border-soft);
+  border-radius:var(--radius); margin-bottom:14px; overflow:hidden;
+  box-shadow:0 1px 3px rgba(22,50,74,.06);
+  transition:border-color .15s ease, box-shadow .15s ease;
+}
+.entry-card:hover{border-color:var(--border); box-shadow:0 4px 14px rgba(22,50,74,.10);}
+.entry-node{
+  position:absolute; left:-34px; top:24px; width:14px; height:14px; border-radius:50%;
+  background:var(--bg); border:2px solid var(--green);
+}
+.entry-node.loss{border-color:var(--red);}
+.entry-card.loss-card .entry-head{border-left:3px solid var(--red);}
+.entry-card.win-card .entry-head{border-left:3px solid var(--green);}
+.entry-head{
+  display:flex; align-items:center; gap:16px; padding:16px 18px; cursor:pointer;
+}
+.entry-date{font-family:var(--font-mono); font-size:13.5px; color:var(--text-faint); min-width:78px;}
+.entry-asset{font-weight:700; font-size:17px; min-width:84px;}
+.side-pill{
+  font-size:12.5px; font-weight:700; letter-spacing:.05em; padding:3px 9px; border-radius:99px;
+}
+.side-pill.buy{background:var(--green-soft); color:var(--green);}
+.side-pill.sell{background:var(--red-soft); color:var(--red);}
+.entry-mid{flex:1; display:flex; gap:18px; align-items:center; font-family:var(--font-mono); font-size:14px; color:var(--text-dim); flex-wrap:wrap;}
+.entry-mid .lbl{color:var(--text-faint); margin-right:4px;}
+.entry-pnl{font-weight:700;}
+.entry-pnl.pos{color:var(--green);} .entry-pnl.neg{color:var(--red);}
+.entry-tags{display:flex; gap:6px; flex-wrap:wrap; max-width:260px;}
+.tag{
+  font-size:12px; padding:3px 8px; border-radius:99px; border:1px solid var(--border);
+  color:var(--text-dim); white-space:nowrap;
+}
+.tag.t-trend{border-color:rgba(215,169,78,.3); color:var(--amber);}
+.tag.t-fib{border-color:rgba(91,146,172,.35); color:var(--teal);}
+.chev{color:var(--text-faint); transition:transform .2s ease; flex-shrink:0;}
+.entry-card.open .chev{transform:rotate(180deg);}
+.entry-body{max-height:0; overflow:hidden; transition:max-height .25s ease;}
+.entry-body-inner{padding:4px 20px 22px; border-top:1px solid var(--border-soft);}
+
+.detail-grid{display:grid; grid-template-columns:repeat(6,1fr); gap:10px; margin:16px 0;}
+.dstat{background:var(--bg-2); border:1px solid var(--border-soft); border-radius:8px; padding:10px 12px;}
+.dstat-l{font-size:11.5px; letter-spacing:.08em; color:var(--text-faint); text-transform:uppercase; margin-bottom:4px;}
+.dstat-v{font-family:var(--font-mono); font-size:16px; font-weight:600;}
+
+.section-block{margin-top:18px;}
+.section-title{
+  display:flex; align-items:center; gap:10px; font-family:var(--font-display);
+  font-size:12.5px; letter-spacing:.12em; color:var(--text-faint); text-transform:uppercase; margin-bottom:9px;
+}
+.section-title .num{color:var(--amber); font-weight:700;}
+.tag-row{display:flex; gap:6px; flex-wrap:wrap;}
+.tag-static{font-size:13.5px; padding:5px 11px; border-radius:99px; background:var(--panel-2); border:1px solid var(--border); color:var(--text);}
+.narrative-box{
+  background:var(--bg-2); border:1px solid var(--border-soft); border-left:3px solid var(--teal);
+  border-radius:8px; padding:14px 16px; font-size:15.5px; line-height:1.75; color:var(--text-dim); white-space:pre-wrap;
+}
+.psych-row{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+.psych-before-badge{
+  font-size:13.5px; font-weight:600; padding:5px 12px; border-radius:99px;
+}
+.psych-before-badge.confident{background:var(--green-soft); color:var(--green);}
+.psych-before-badge.unconfident{background:var(--red-soft); color:var(--red);}
+.psych-chip{font-size:13.5px; padding:5px 11px; border-radius:99px; background:var(--violet-soft); color:var(--violet); border:1px solid rgba(124,99,201,.35);}
+.lesson-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+.lesson-card{background:var(--bg-2); border:1px solid var(--border-soft); border-radius:8px; padding:11px 13px;}
+.lesson-l{font-size:12.5px; color:var(--text-faint); margin-bottom:5px; font-weight:600;}
+.lesson-v{font-size:14.5px; color:var(--text); line-height:1.6; white-space:pre-wrap;}
+.img-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;}
+.img-thumb{width:104px; height:104px; object-fit:cover; border-radius:8px; border:1px solid var(--border); cursor:pointer;}
+.detail-actions{display:flex; gap:8px; margin-top:18px; padding-top:14px; border-top:1px solid var(--border-soft);}
+
+/* ===== Empty state ===== */
+.empty-state{
+  max-width:1180px; margin:60px auto; padding:0 28px; text-align:center;
+}
+.empty-icon{width:120px; margin:0 auto 18px;}
+.empty-title{font-family:var(--font-display); font-size:21.5px; font-weight:600; margin-bottom:6px;}
+.empty-sub{color:var(--text-dim); font-size:16px; max-width:420px; margin:0 auto 22px;}
+
+/* ===== Modal ===== */
+.modal-overlay{
+  position:fixed; inset:0; background:rgba(8,9,11,.72); backdrop-filter:blur(3px);
+  display:flex; align-items:flex-start; justify-content:center; z-index:100; padding:36px 16px;
+  overflow-y:auto;
+}
+.modal{
+  background:var(--panel); border:1px solid var(--border); border-radius:14px;
+  width:100%; max-width:760px; box-shadow:0 30px 80px rgba(0,0,0,.5);
+}
+.modal-header{
+  display:flex; align-items:center; justify-content:space-between; padding:20px 24px;
+  border-bottom:1px solid var(--border-soft); position:sticky; top:0; background:var(--panel); border-radius:14px 14px 0 0; z-index:2;
+}
+.modal-title{font-family:var(--font-display); font-size:19px; font-weight:600;}
+.close-x{background:none; border:none; color:var(--text-faint); font-size:22.5px; padding:4px 8px;}
+.close-x:hover{color:var(--text);}
+.modal-body{padding:6px 24px 10px;}
+
+.acc-section{border-bottom:1px solid var(--border-soft);}
+.acc-head{
+  display:flex; align-items:center; gap:12px; padding:16px 2px; cursor:pointer; user-select:none;
+}
+.acc-num{
+  font-family:var(--font-mono); font-size:13.5px; color:var(--bg); background:var(--amber);
+  width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-weight:700; flex-shrink:0;
+}
+.acc-titles{flex:1;}
+.acc-title{font-weight:600; font-size:16.5px;}
+.acc-sub{font-size:13.5px; color:var(--text-faint); margin-top:1px;}
+.acc-chev{color:var(--text-faint); transition:transform .2s ease;}
+.acc-section.open .acc-chev{transform:rotate(180deg);}
+.acc-body{max-height:0; overflow:hidden; transition:max-height .3s ease;}
+.acc-body-inner{padding:2px 2px 20px;}
+
+.field-row{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;}
+.field-row.three{grid-template-columns:1fr 1fr 1fr;}
+.field{display:flex; flex-direction:column; gap:6px;}
+.field label{font-size:13.5px; color:var(--text-dim); font-weight:500;}
+.field input[type=text], .field input[type=number], .field input[type=date], .field textarea, .field select{
+  background:var(--bg-2); border:1px solid var(--border); color:var(--text);
+  padding:10px 12px; border-radius:8px; font-size:15.5px; width:100%;
+}
+.field input:focus, .field textarea:focus, .field select:focus{outline:none; border-color:var(--amber);}
+.field textarea{resize:vertical; min-height:64px; line-height:1.6;}
+.help{font-size:12.5px; color:var(--text-faint); margin-top:2px;}
+.help.warn{color:var(--red);}
+
+.side-toggle{display:flex; gap:8px;}
+.side-toggle button{
+  flex:1; padding:10px; border-radius:8px; border:1px solid var(--border); background:var(--bg-2);
+  color:var(--text-dim); font-weight:700; font-size:14.5px; letter-spacing:.03em;
+}
+.side-toggle button.sel-buy.active{background:var(--green-soft); border-color:var(--green); color:var(--green);}
+.side-toggle button.sel-sell.active{background:var(--red-soft); border-color:var(--red); color:var(--red);}
+
+.chip-grid{display:flex; gap:8px; flex-wrap:wrap;}
+.chip-opt{
+  padding:8px 13px; border-radius:99px; border:1px solid var(--border); background:var(--bg-2);
+  color:var(--text-dim); font-size:14px; transition:.12s ease;
+}
+.chip-opt:hover{border-color:var(--text-faint);}
+.chip-opt.sel{background:var(--amber-soft); border-color:var(--amber); color:var(--amber);}
+.chip-opt.sel.violet{background:var(--violet-soft); border-color:var(--violet); color:var(--violet);}
+.chip-opt.single.sel{background:var(--teal-soft); border-color:var(--teal); color:var(--teal);}
+
+.upload-zone{
+  border:1.5px dashed var(--border); border-radius:10px; padding:22px; text-align:center; color:var(--text-faint);
+  font-size:14.5px; cursor:pointer; transition:.15s ease;
+}
+.upload-zone:hover{border-color:var(--amber); color:var(--amber);}
+.upload-preview{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;}
+.upload-thumb{position:relative; width:96px; height:96px;}
+.upload-thumb img{width:100%; height:100%; object-fit:cover; border-radius:8px; border:1px solid var(--border); cursor:pointer;}
+.upload-thumb .rm{
+  position:absolute; top:-6px; right:-6px; width:20px; height:20px; border-radius:50%;
+  background:var(--red); color:#fff; border:2px solid var(--panel); font-size:13.5px; line-height:1; display:flex; align-items:center; justify-content:center;
+  z-index:2;
+}
+.upload-thumb .edit-img{
+  position:absolute; bottom:5px; right:5px; width:26px; height:26px; border-radius:50%;
+  background:rgba(11,79,126,.85); color:var(--amber); border:1.5px solid var(--amber);
+  font-size:13px; line-height:1; display:flex; align-items:center; justify-content:center; z-index:2;
+}
+.upload-thumb .edit-img:hover{background:var(--amber); color:#0B3E63;}
+
+.modal-footer{
+  display:flex; justify-content:flex-end; gap:10px; padding:16px 24px; border-top:1px solid var(--border-soft);
+  position:sticky; bottom:0; background:var(--panel); border-radius:0 0 14px 14px;
+}
+
+.toast{
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+  background:var(--panel-2); border:1px solid var(--border); color:var(--text);
+  padding:11px 20px; border-radius:9px; font-size:15.5px; z-index:200; opacity:0; transition:.25s ease;
+  box-shadow:0 12px 30px rgba(0,0,0,.4);
+}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+.lightbox{
+  position:fixed; inset:0; background:rgba(5,6,8,.92); display:flex; align-items:center; justify-content:center;
+  z-index:300; padding:30px;
+}
+.lightbox img{max-width:100%; max-height:100%; border-radius:8px;}
+.lightbox-close{position:absolute; top:20px; right:28px; color:#fff; font-size:29.5px; background:none; border:none;}
+
+/* ===== Image Annotator ===== */
+.annotator-overlay{
+  position:fixed; inset:0; z-index:400; background:#06283F;
+  display:flex; flex-direction:column;
+}
+.annotator-toolbar{
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  padding:10px 16px; background:var(--panel); border-bottom:1px solid var(--border-soft);
+}
+.ann-group{display:flex; align-items:center; gap:6px; flex-wrap:wrap;}
+.ann-tool{
+  background:var(--bg-2); border:1px solid var(--border); color:var(--text-dim);
+  padding:8px 12px; border-radius:8px; font-size:13.5px; display:flex; align-items:center; gap:6px;
+}
+.ann-tool.active{background:var(--amber-soft); border-color:var(--amber); color:var(--amber);}
+.ann-color{
+  width:26px; height:26px; border-radius:50%; border:2px solid rgba(255,255,255,.25); padding:0;
+}
+.ann-color.active{border-color:#fff; box-shadow:0 0 0 2px var(--amber);}
+.ann-color-custom{
+  width:26px; height:26px; border-radius:50%; border:2px solid rgba(255,255,255,.25); padding:0; background:none; cursor:pointer;
+}
+.ann-size-label{font-size:12.5px; color:var(--text-faint); white-space:nowrap;}
+.ann-size{width:100px; accent-color:var(--amber);}
+.annotator-spacer{flex:1;}
+.annotator-canvas-wrap{
+  flex:1; display:flex; align-items:center; justify-content:center; overflow:hidden; padding:16px; position:relative;
+}
+#annotatorCanvas{
+  max-width:100%; max-height:100%; touch-action:none; border-radius:6px;
+  box-shadow:0 10px 40px rgba(0,0,0,.45); cursor:crosshair; background:#000;
+}
+.annotator-footer{
+  display:flex; justify-content:flex-end; gap:10px; padding:14px 16px;
+  background:var(--panel); border-top:1px solid var(--border-soft);
+}
+.ann-text-input{
+  position:absolute; background:rgba(6,40,63,.55); border:1.5px dashed var(--amber); color:var(--text);
+  font-family:var(--font-body); padding:2px 4px; outline:none; min-width:48px; z-index:10; border-radius:3px;
+}
+.ann-text-layer{
+  position:absolute; z-index:5; white-space:nowrap; cursor:move; user-select:none; touch-action:none;
+  font-family:'Noto Sans Thai', sans-serif; font-weight:600; line-height:1.15;
+  padding:3px 17px 3px 5px; border-radius:5px; border:1px dashed transparent;
+  text-shadow:0 1px 3px rgba(0,0,0,.5);
+}
+.ann-text-layer:hover, .ann-text-layer.dragging{
+  border-color:rgba(255,255,255,.5); background:rgba(0,0,0,.22);
+}
+.ann-text-del{
+  position:absolute; top:-7px; right:-7px; width:18px; height:18px; border-radius:50%;
+  background:var(--red); color:#fff; border:2px solid #06283F; font-size:11px; line-height:1; padding:0;
+  display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .15s ease; cursor:pointer;
+}
+.ann-text-layer:hover .ann-text-del{opacity:1;}
+
+@media (max-width:720px){
+  .stats-ticker{grid-template-columns:repeat(2,1fr);}
+  .field-row, .field-row.three{grid-template-columns:1fr;}
+  .detail-grid{grid-template-columns:repeat(3,1fr);}
+  .lesson-grid{grid-template-columns:1fr;}
+  .entry-mid{display:none;}
+  .topbar{padding:14px 16px;}
+  .timeline-wrap{padding:14px 14px 70px;}
+  .annotator-toolbar{gap:8px; padding:8px 10px;}
+  .ann-tool{padding:7px 9px; font-size:12px;}
+  .ann-text-del{opacity:1;}
+}
+
+/* ===== Insight Panel ===== */
+.insight-overlay{
+  position:fixed; inset:0; background:rgba(22,50,74,.55); backdrop-filter:blur(4px);
+  z-index:150; display:flex; align-items:flex-start; justify-content:center;
+  padding:28px 16px; overflow-y:auto;
+}
+.insight-inner{
+  background:var(--panel); border:1px solid var(--border); border-radius:14px;
+  width:100%; max-width:900px; box-shadow:0 20px 60px rgba(22,50,74,.18);
+}
+.insight-header{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:20px 26px; border-bottom:1px solid var(--border-soft);
+  position:sticky; top:0; background:var(--panel); border-radius:14px 14px 0 0; z-index:2;
+}
+.insight-title{font-family:var(--font-display); font-size:18px; font-weight:700;}
+.insight-body{padding:22px 26px 30px;}
+
+.insight-summary{
+  display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:26px;
+}
+.ins-stat{background:var(--bg-2); border:1px solid var(--border-soft); border-radius:10px; padding:14px 16px;}
+.ins-stat-l{font-size:11px; letter-spacing:.09em; text-transform:uppercase; color:var(--text-faint); margin-bottom:5px;}
+.ins-stat-v{font-family:var(--font-mono); font-size:22px; font-weight:700;}
+
+.insight-cols{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:22px;}
+.ins-col{background:var(--bg-2); border:1px solid var(--border-soft); border-radius:10px; padding:16px 18px;}
+.ins-col-title{
+  font-size:13px; font-weight:700; letter-spacing:.04em; margin-bottom:14px;
+  display:flex; align-items:center; gap:8px;
+}
+.ins-col-title.win{color:var(--green);}
+.ins-col-title.loss{color:var(--red);}
+.ins-badge{width:10px; height:10px; border-radius:50%; flex-shrink:0;}
+.ins-badge.win{background:var(--green);}
+.ins-badge.loss{background:var(--red);}
+
+.ins-section-label{font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-faint); margin:14px 0 8px;}
+.ins-bar-row{display:flex; align-items:center; gap:10px; margin-bottom:7px;}
+.ins-bar-label{font-size:12.5px; color:var(--text); flex:1; min-width:0; white-space:normal; line-height:1.3;}
+.ins-bar-wrap{width:100px; flex-shrink:0; height:8px; background:var(--border-soft); border-radius:99px; overflow:hidden;}
+.ins-bar-fill{height:100%; border-radius:99px; transition:width .4s ease;}
+.ins-bar-fill.win{background:var(--green);}
+.ins-bar-fill.loss{background:var(--red);}
+.ins-bar-count{font-family:var(--font-mono); font-size:12px; color:var(--text-dim); flex-shrink:0; min-width:32px; text-align:right;}
+
+.ins-psych-row{display:flex; gap:7px; flex-wrap:wrap; margin-top:6px;}
+.ins-psych-chip{font-size:12px; padding:4px 10px; border-radius:99px;}
+.ins-psych-chip.win{background:var(--green-soft); color:var(--green); border:1px solid rgba(39,150,107,.3);}
+.ins-psych-chip.loss{background:var(--red-soft); color:var(--red); border:1px solid rgba(221,74,62,.3);}
+
+.ins-empty{
+  text-align:center; padding:50px 20px; color:var(--text-faint); font-size:14px;
+}
+
+/* ===== Print / PDF export ===== */
+#printArea{ display:none; }
+@media print{
+  body *{ visibility:hidden; }
+  #printArea, #printArea *{ visibility:visible; }
+  #printArea{
+    display:block; position:absolute; left:0; top:0; width:100%;
+    background:#fff; padding:0; margin:0;
+  }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <svg class="brand-icon" viewBox="0 0 60 60" fill="none">
+      <path d="M37 8 L39.5 16 L47 18.5 L39.5 21 L37 29 L34.5 21 L27 18.5 L34.5 16 Z" fill="#F2D27A"/>
+      <path d="M48 4 L49.3 8.2 L53.5 9.5 L49.3 10.8 L48 15 L46.7 10.8 L42.5 9.5 L46.7 8.2 Z" fill="#F2D27A"/>
+      <path d="M14 56c0-9 2-13 7-18 4-4 5-7 5-12 0-5-3-9-3-9 6 1 11 6 11 13 0 4-2 7-5 10-1.5 1.5-2 3-2 6h-13z" fill="#FFFFFF"/>
+      <path d="M14 56c0-9 2-13 7-18" stroke="#0B4F7E" stroke-width="1.2" fill="none" opacity=".35"/>
+    </svg>
+    <div class="brand-text">
+      <span class="brand-mark">ดีดนิ้ว</span>
+      <span class="brand-mark-2">TRADER JOURNAL</span>
+    </div>
+  </div>
+  <button class="btn btn-ghost" id="insightBtn">📊 Insight</button>
+  <button class="btn btn-primary" id="newEntryBtn">+ บันทึกไม้ใหม่</button>
+</header>
+
+<div class="stats-ticker" id="statsTicker"></div>
+
+<div class="filter-bar">
+  <input type="text" id="searchInput" placeholder="ค้นหาสินทรัพย์...">
+  <div class="seg" id="resultFilter">
+    <button data-v="all" class="active">ทั้งหมด</button>
+    <button data-v="win">กำไร</button>
+    <button data-v="loss">ขาดทุน</button>
+  </div>
+  <div class="seg" id="sideFilter">
+    <button data-v="all" class="active">Buy/Sell</button>
+    <button data-v="buy">Buy</button>
+    <button data-v="sell">Sell</button>
+  </div>
+</div>
+
+<div class="timeline-wrap">
+  <div class="timeline" id="timeline"></div>
+  <div class="empty-state hidden" id="emptyState">
+    <svg class="empty-icon" viewBox="0 0 160 100" fill="none">
+      <path d="M138 10 L140.5 17 L147.5 19.5 L140.5 22 L138 29 L135.5 22 L128.5 19.5 L135.5 17 Z" fill="#F2D27A"/>
+      <polyline points="5,70 35,30 60,55 90,15 120,45 138,19" stroke="#C7D5E0" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div class="empty-title">ยังไม่มีบันทึกการเทรด</div>
+    <div class="empty-sub">เริ่มต้นเล่าเรื่องไม้แรกของคุณ — โครงสร้างตลาด มุมมอง และเหตุผลที่กดเข้า ทุกอย่างที่ทำให้คุณเทรดเก่งขึ้นเริ่มจากการบันทึก</div>
+    <button class="btn btn-primary" id="emptyNewBtn">+ บันทึกไม้แรก</button>
+  </div>
+</div>
+
+<!-- ===== Entry Modal ===== -->
+<div class="modal-overlay hidden" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">บันทึกไม้ใหม่</div>
+      <button class="close-x" id="modalClose">&times;</button>
+    </div>
+    <div class="modal-body" id="accordionRoot"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="cancelBtn">ยกเลิก</button>
+      <button class="btn btn-primary" id="saveBtn">บันทึกเรื่องราว</button>
+    </div>
+  </div>
+</div>
+
+<div class="lightbox hidden" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose">&times;</button>
+  <img id="lightboxImg" src="" />
+</div>
+
+<div class="annotator-overlay hidden" id="annotatorOverlay">
+  <div class="annotator-toolbar">
+    <div class="ann-group" id="annToolGroup">
+      <button type="button" class="ann-tool active" data-tool="pen" title="ปากกา">✏️ ปากกา</button>
+      <button type="button" class="ann-tool" data-tool="line" title="เส้นตรง">／ เส้นตรง</button>
+      <button type="button" class="ann-tool" data-tool="arrow" title="ลูกศร">➔ ลูกศร</button>
+      <button type="button" class="ann-tool" data-tool="rect" title="กรอบสี่เหลี่ยม">▭ กรอบ</button>
+      <button type="button" class="ann-tool" data-tool="text" title="ข้อความ">T ข้อความ</button>
+    </div>
+    <div class="ann-group" id="annColorGroup">
+      <button type="button" class="ann-color active" data-color="#FF6B5B" style="background:#FF6B5B"></button>
+      <button type="button" class="ann-color" data-color="#F2D27A" style="background:#F2D27A"></button>
+      <button type="button" class="ann-color" data-color="#62E0AA" style="background:#62E0AA"></button>
+      <button type="button" class="ann-color" data-color="#5BC8F2" style="background:#5BC8F2"></button>
+      <button type="button" class="ann-color" data-color="#FFFFFF" style="background:#FFFFFF"></button>
+      <input type="color" id="annColorPicker" class="ann-color-custom" value="#FF6B5B" title="สีกำหนดเอง">
+    </div>
+    <div class="ann-group">
+      <span class="ann-size-label">ความหนา</span>
+      <input type="range" id="annSize" class="ann-size" min="2" max="18" value="4">
+    </div>
+    <div class="annotator-spacer"></div>
+    <div class="ann-group">
+      <button type="button" class="btn btn-sm" id="annUndo">↺ ย้อนกลับ</button>
+      <button type="button" class="btn btn-sm btn-danger" id="annClear">ล้างทั้งหมด</button>
+    </div>
+  </div>
+  <div class="annotator-canvas-wrap">
+    <canvas id="annotatorCanvas"></canvas>
+  </div>
+  <div class="annotator-footer">
+    <button type="button" class="btn btn-ghost" id="annCancel">ยกเลิก</button>
+    <button type="button" class="btn btn-primary" id="annSave">บันทึกรูปนี้</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div id="printArea"></div>
+
+<!-- ===== Insight Panel ===== -->
+<div class="insight-overlay hidden" id="insightOverlay">
+  <div class="insight-inner">
+    <div class="insight-header">
+      <div class="insight-title">📊 Insight — วิเคราะห์ไม้ของคุณ</div>
+      <button class="close-x" id="insightClose">&times;</button>
+    </div>
+    <div id="insightBody" class="insight-body"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   DATA / OPTIONS
+============================================================ */
+const OPTS = {
+  trend: ['ขาขึ้น','ขาลง','Sideway'],
+  pricePosition: ['แนวรับสำคัญ','แนวต้านสำคัญ'],
+  tradeStyle: ['ตามเทรนด์','สวนเทรนด์'],
+  expectation: ['รีบาว','สะดุ้ง','ลุ้น TF เล็กแยกตัว','ค้างดีดลุ้น Overbought','ค้างย่อลุ้น Oversold','เปลี่ยนแนวโน้ม','เบรคไฮ/หลุดโลว์ไปต่อตามเทรนด์'],
+  trigger: ['Bullish Div / Hidden Bullish Div','Bearish Div / Hidden Bearlish Div','Subwave เริ่มฟอร์มตัว (แค่นับ 1 ยังไม่สำเร็จ)','Subwave ฟอร์มสำเร็จขาขึ้น (นับ 2 สำเร็จ)','Subwave ฟอร์มสำเร็จขาลง (นับ 2 สำเร็จ)','ชนะโครงสร้าง 1 ขา','แท่งเทียนกลับตัว Subwave','แท่งเทียนกลับตัว TF ที่จะเล่น','Aggressive ไม่รออะไรเลยชนแนวเข้าเลย'],
+  psychBefore: ['มั่นใจ','ไม่มั่นใจ'],
+  psychDuring: ['กลัว','โลภ','FOMO','อยากเอาคืน','ลังเล','มั่นใจ','นิ่ง'],
+  exitReason: ['TP','SL','Structure เสีย','ปิดตามแผน','ปิดก่อนแผน','กลัวกำไรหาย']
+};
+
+const ACC_SECTIONS = [
+  {id:'trade', num:1, title:'ข้อมูลการเทรด', sub:'วันที่ สินทรัพย์ ทิศทาง ราคา และผลลัพธ์'},
+  {id:'context', num:2, title:'ภาพรวมตลาด', sub:'แนวโน้ม ตำแหน่งราคา และสิ่งที่คาดหวัง'},
+  {id:'trigger', num:3, title:'Entry Confirmation', sub:'สัญญาณยืนยันก่อนเข้า (เลือกได้ไม่จำกัด)'},
+  {id:'narrative', num:4, title:'Narrative', sub:'ส่วนสำคัญที่สุด — เล่าเรื่องราวของไม้นี้'},
+  {id:'psych', num:5, title:'Psychology', sub:'อารมณ์ก่อนเข้าและระหว่างถือ'},
+  {id:'exit', num:6, title:'Exit Reason', sub:'เหตุผลที่ปิดสถานะ (เลือกได้ไม่จำกัด)'},
+  {id:'lesson', num:7, title:'Lesson Learned', sub:'บทเรียนจากไม้นี้'},
+  {id:'images', num:8, title:'รูปภาพประกอบ', sub:'แนบกราฟ / สกรีนช็อตประกอบเรื่องราว'},
+];
+
+let trades = [];          // lightweight summaries
+let editingId = null;     // currently editing trade id
+let form = blankForm();
+let openCardId = null;
+let modalDirty = false;   // tracks unsaved changes in the entry modal
+
+let annState = {
+  tool:'pen', color:'#FF6B5B', size:4,
+  editingIndex:null, history:[], drawing:false,
+  canvas:null, ctx:null, startX:0, startY:0, baseImageData:null, originalImg:null,
+  textLayers:[], textIdSeq:1
+};
+
+function blankForm(){
+  return {
+    id:null, date:new Date().toISOString().slice(0,10), asset:'', side:'buy',
+    lot:'', rr:'', entryPrice:'', exitPrice:'', slPrice:'', pnl:'',
+    trend:[], pricePosition:[], tradeStyle:'', expectation:[],
+    trigger:[],
+    narrative:'',
+    psychBefore:'', psychDuring:[],
+    exitReason:[],
+    lessonGood:'', lessonMistake:'',
+    images:[]
+  };
+}
+
+/* ============================================================
+   STORAGE
+   Self-contained persistence (IndexedDB, with a localStorage
+   fallback) so this journal works the same whether it's viewed
+   inside Claude or downloaded and opened directly as a file.
+   window.storage is NOT used here since that API only exists
+   inside Claude's own preview, not in a saved/standalone copy.
+============================================================ */
+const DB_NAME = 'deedniw_trader_journal';
+const DB_STORE = 'kv';
+const INDEX_KEY = 'index';
+const LS_PREFIX = 'deedniw_journal_';
+
+let _dbPromise = null;
+function getDB(){
+  if(_dbPromise) return _dbPromise;
+  _dbPromise = new Promise((resolve, reject)=>{
+    if(!window.indexedDB){ reject(new Error('IndexedDB not available')); return; }
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = e=>{
+      const db = e.target.result;
+      if(!db.objectStoreNames.contains(DB_STORE)) db.createObjectStore(DB_STORE);
+    };
+    req.onsuccess = ()=> resolve(req.result);
+    req.onerror = ()=> reject(req.error);
+  });
+  return _dbPromise;
+}
+
+async function storeGet(key){
+  try{
+    const db = await getDB();
+    return await new Promise((resolve, reject)=>{
+      const tx = db.transaction(DB_STORE, 'readonly');
+      const r = tx.objectStore(DB_STORE).get(key);
+      r.onsuccess = ()=> resolve(r.result===undefined ? null : r.result);
+      r.onerror = ()=> reject(r.error);
+    });
+  }catch(e){
+    try{
+      const raw = localStorage.getItem(LS_PREFIX+key);
+      return raw!=null ? JSON.parse(raw) : null;
+    }catch(e2){ return null; }
+  }
+}
+
+async function storeSet(key, value){
+  try{
+    const db = await getDB();
+    await new Promise((resolve, reject)=>{
+      const tx = db.transaction(DB_STORE, 'readwrite');
+      const r = tx.objectStore(DB_STORE).put(value, key);
+      r.onsuccess = ()=> resolve();
+      r.onerror = ()=> reject(r.error);
+    });
+    return true;
+  }catch(e){
+    console.error('IndexedDB save failed, falling back to localStorage', e);
+    try{
+      localStorage.setItem(LS_PREFIX+key, JSON.stringify(value));
+      return true;
+    }catch(e2){
+      console.error('localStorage fallback also failed', e2);
+      return false;
+    }
+  }
+}
+
+async function storeDelete(key){
+  try{
+    const db = await getDB();
+    await new Promise((resolve, reject)=>{
+      const tx = db.transaction(DB_STORE, 'readwrite');
+      const r = tx.objectStore(DB_STORE).delete(key);
+      r.onsuccess = ()=> resolve();
+      r.onerror = ()=> reject(r.error);
+    });
+  }catch(e){ /* ignore */ }
+  try{ localStorage.removeItem(LS_PREFIX+key); }catch(e2){ /* ignore */ }
+}
+
+async function loadIndex(){
+  try{
+    const v = await storeGet(INDEX_KEY);
+    trades = Array.isArray(v) ? v : [];
+  }catch(e){ trades = []; }
+}
+async function saveIndex(){
+  return await storeSet(INDEX_KEY, trades);
+}
+async function loadFull(id){
+  try{
+    const v = await storeGet('trade:'+id);
+    return v || null;
+  }catch(e){ return null; }
+}
+async function saveFull(t){
+  return await storeSet('trade:'+t.id, t);
+}
+async function deleteFull(id){
+  await storeDelete('trade:'+id);
+}
+
+function toSummary(t){
+  return {
+    id:t.id, date:t.date, asset:t.asset, side:t.side, lot:t.lot, rr:t.rr,
+    entryPrice:t.entryPrice, exitPrice:t.exitPrice, slPrice:t.slPrice, pnl:t.pnl,
+    trend:t.trend, pricePosition:t.pricePosition, tradeStyle:t.tradeStyle,
+    expectation:t.expectation, trigger:t.trigger, exitReason:t.exitReason, createdAt:t.createdAt
+  };
+}
+
+/* ============================================================
+   RENDER: STATS
+============================================================ */
+function fmtRR(v){
+  if(v===null || v===undefined || v==='') return '—';
+  const n = parseFloat(v);
+  return isNaN(n) ? '—' : `1:${n.toFixed(2)}`;
+}
+
+function renderStats(){
+  const total = trades.length;
+  const wins = trades.filter(t=>parseFloat(t.pnl)>0).length;
+  const winRate = total ? Math.round((wins/total)*100) : 0;
+  const netPnl = trades.reduce((s,t)=>s+(parseFloat(t.pnl)||0),0);
+  const rrs = trades.map(t=>parseFloat(t.rr)).filter(v=>!isNaN(v));
+  const avgRR = rrs.length ? (rrs.reduce((a,b)=>a+b,0)/rrs.length) : 0;
+
+  const cells = [
+    {label:'จำนวนไม้ทั้งหมด', value: total, cls:''},
+    {label:'Win Rate', value: total ? winRate+'%' : '—', cls: total ? (winRate>=50?'pos':'neg') : ''},
+    {label:'RR เฉลี่ย', value: rrs.length ? fmtRR(avgRR) : '—', cls:''},
+    {label:'กำไร/ขาดทุนสุทธิ', value: total ? (netPnl>=0?'+':'')+netPnl.toFixed(2) : '—', cls: netPnl>0?'pos':(netPnl<0?'neg':'')}
+  ];
+  document.getElementById('statsTicker').innerHTML = cells.map(c=>`
+    <div class="stat-cell">
+      <div class="stat-label">${c.label}</div>
+      <div class="stat-value ${c.cls}">${c.value}</div>
+    </div>`).join('');
+}
+
+/* ============================================================
+   RENDER: TIMELINE
+============================================================ */
+let activeResultFilter = 'all';
+let activeSideFilter = 'all';
+let searchTerm = '';
+
+function getFiltered(){
+  return trades
+    .filter(t=>{
+      if(activeResultFilter==='win' && !(parseFloat(t.pnl)>0)) return false;
+      if(activeResultFilter==='loss' && !(parseFloat(t.pnl)<0)) return false;
+      if(activeSideFilter!=='all' && t.side!==activeSideFilter) return false;
+      if(searchTerm && !t.asset.toLowerCase().includes(searchTerm.toLowerCase())) return false;
+      return true;
+    })
+    .sort((a,b)=> new Date(b.date) - new Date(a.date) || b.createdAt-a.createdAt);
+}
+
+function tagChips(list, cls){
+  return (list||[]).map(v=>`<span class="tag ${cls||''}">${esc(v)}</span>`).join('');
+}
+
+function esc(s){
+  return String(s??'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+function renderTimeline(){
+  const list = getFiltered();
+  const wrap = document.getElementById('timeline');
+  const empty = document.getElementById('emptyState');
+
+  if(trades.length===0){
+    wrap.innerHTML=''; empty.classList.remove('hidden'); return;
+  }
+  empty.classList.add('hidden');
+
+  if(list.length===0){
+    wrap.innerHTML = `<div style="color:var(--text-faint); font-size:15.5px; padding:30px 0;">ไม่พบรายการที่ตรงกับตัวกรอง</div>`;
+    return;
+  }
+
+  wrap.innerHTML = `<svg class="spine" width="2" height="100%"><line x1="1" y1="0" x2="1" y2="100%" stroke="#D7E1EA" stroke-width="2" stroke-dasharray="3,5"/></svg>` +
+    list.map(t=>cardHtml(t)).join('');
+
+  // re-attach open state
+  if(openCardId){
+    const el = document.querySelector(`.entry-card[data-id="${openCardId}"]`);
+    if(el) openCard(el, true);
+  }
+}
+
+function cardHtml(t){
+  const isWin = parseFloat(t.pnl) > 0;
+  const isLoss = parseFloat(t.pnl) < 0;
+  const pnlNum = parseFloat(t.pnl);
+  return `
+  <div class="entry-card ${isWin?'win-card':''} ${isLoss?'loss-card':''}" data-id="${t.id}">
+    <div class="entry-node ${isLoss?'loss':''}"></div>
+    <div class="entry-head" data-toggle="${t.id}">
+      <div class="entry-date">${fmtDate(t.date)}</div>
+      <div class="entry-asset">${esc(t.asset)||'—'}</div>
+      <span class="side-pill ${t.side}">${t.side==='buy'?'BUY':'SELL'}</span>
+      <div class="entry-mid">
+        <span><span class="lbl">Entry</span>${esc(t.entryPrice)||'—'}</span>
+        <span><span class="lbl">Exit</span>${esc(t.exitPrice)||'—'}</span>
+        <span><span class="lbl">RR</span>${fmtRR(t.rr)}</span>
+        <span class="entry-pnl ${pnlNum>0?'pos':(pnlNum<0?'neg':'')}">${isNaN(pnlNum)?'—':(pnlNum>=0?'+':'')+pnlNum}</span>
+      </div>
+      <div class="entry-tags">
+        ${tagChips((t.trend||[]).slice(0,1),'t-trend')}
+        ${t.tradeStyle ? `<span class="tag" style="border-color:${t.tradeStyle==='ตามเทรนด์'?'rgba(39,150,107,.4)':'rgba(200,146,46,.4)'}; color:${t.tradeStyle==='ตามเทรนด์'?'var(--green)':'var(--amber)'};">${esc(t.tradeStyle)}</span>` : ''}
+        ${tagChips((t.pricePosition||[]).slice(0,1),'t-fib')}
+      </div>
+      <svg class="chev" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="entry-body">
+      <div class="entry-body-inner" data-body="${t.id}">
+        <div style="color:var(--text-faint); font-size:14px;">กำลังโหลด...</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function fmtDate(d){
+  if(!d) return '—';
+  const parts = d.split('-');
+  if(parts.length!==3) return d;
+  const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  return `${parseInt(parts[2])} ${months[parseInt(parts[1])-1]} ${parts[0]}`;
+}
+
+async function openCard(el, skipToggleState){
+  const id = el.dataset.id;
+  const body = el.querySelector('.entry-body');
+  const inner = el.querySelector('.entry-body-inner');
+  const isOpen = el.classList.contains('open');
+
+  if(isOpen && !skipToggleState){
+    el.classList.remove('open');
+    body.style.maxHeight = null;
+    openCardId = null;
+    return;
+  }
+  el.classList.add('open');
+  openCardId = id;
+
+  const full = await loadFull(id);
+  if(full) inner.innerHTML = detailHtml(full);
+  body.style.maxHeight = body.scrollHeight + 'px';
+  // allow inner content (images load) to adjust height
+  setTimeout(()=>{ body.style.maxHeight = body.scrollHeight + 'px'; }, 60);
+}
+
+function detailHtml(t){
+  const pnlNum = parseFloat(t.pnl);
+  return `
+    <div class="detail-grid">
+      <div class="dstat"><div class="dstat-l">Entry</div><div class="dstat-v">${esc(t.entryPrice)||'—'}</div></div>
+      <div class="dstat"><div class="dstat-l">Exit</div><div class="dstat-v">${esc(t.exitPrice)||'—'}</div></div>
+      <div class="dstat"><div class="dstat-l">Stop Loss</div><div class="dstat-v">${esc(t.slPrice)||'—'}</div></div>
+      <div class="dstat"><div class="dstat-l">Lot Size</div><div class="dstat-v">${esc(t.lot)||'—'}</div></div>
+      <div class="dstat"><div class="dstat-l">RR</div><div class="dstat-v">${fmtRR(t.rr)}</div></div>
+      <div class="dstat"><div class="dstat-l">กำไร/ขาดทุน</div><div class="dstat-v" style="color:${pnlNum>0?'var(--green)':(pnlNum<0?'var(--red)':'var(--text)')}">${isNaN(pnlNum)?'—':(pnlNum>=0?'+':'')+pnlNum}</div></div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title"><span class="num">02</span> ภาพรวมตลาด</div>
+      <div class="tag-row">
+        ${[...(t.trend||[]),...(t.pricePosition||[])].map(v=>`<span class="tag-static">${esc(v)}</span>`).join('')}
+        ${t.tradeStyle ? `<span class="tag-static" style="background:${t.tradeStyle==='ตามเทรนด์'?'var(--green-soft)':'var(--amber-soft)'}; border-color:${t.tradeStyle==='ตามเทรนด์'?'var(--green)':'var(--amber)'}; color:${t.tradeStyle==='ตามเทรนด์'?'var(--green)':'var(--amber)'};">${esc(t.tradeStyle)}</span>` : ''}
+        ${(t.expectation||[]).map(v=>`<span class="tag-static">${esc(v)}</span>`).join('')}
+        ${![...(t.trend||[]),...(t.pricePosition||[]),...(t.expectation||[])].length && !t.tradeStyle ? '<span style="color:var(--text-faint); font-size:14px;">— ไม่ได้ระบุ —</span>' : ''}
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title"><span class="num">03</span> Entry Confirmation</div>
+      <div class="tag-row">${(t.trigger||[]).map(v=>`<span class="tag-static">${esc(v)}</span>`).join('') || '<span style="color:var(--text-faint); font-size:14px;">— ไม่ได้ระบุ —</span>'}</div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title"><span class="num">04</span> Narrative</div>
+      <div class="narrative-box">${esc(t.narrative)||'— ไม่มีบันทึก —'}</div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title"><span class="num">05</span> Psychology</div>
+      <div class="psych-row">
+        ${t.psychBefore ? `<span class="psych-before-badge ${t.psychBefore==='มั่นใจ'?'confident':'unconfident'}">ก่อนเข้า: ${esc(t.psychBefore)}</span>`:''}
+        ${(t.psychDuring||[]).map(v=>`<span class="psych-chip">${esc(v)}</span>`).join('')}
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title"><span class="num">06</span> Exit Reason</div>
+      <div class="tag-row">${(t.exitReason||[]).map(v=>`<span class="tag-static">${esc(v)}</span>`).join('') || '<span style="color:var(--text-faint); font-size:.78rem;">— ไม่ได้ระบุ —</span>'}</div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title"><span class="num">07</span> Lesson Learned</div>
+      <div class="lesson-grid">
+        <div class="lesson-card"><div class="lesson-l" style="color:var(--green)">สิ่งที่ทำได้ดี</div><div class="lesson-v">${esc(t.lessonGood)||'—'}</div></div>
+        <div class="lesson-card"><div class="lesson-l" style="color:var(--red)">สิ่งที่พลาด</div><div class="lesson-v">${esc(t.lessonMistake)||'—'}</div></div>
+      </div>
+    </div>
+
+    ${(t.images && t.images.length) ? `
+    <div class="section-block">
+      <div class="section-title"><span class="num">08</span> รูปภาพประกอบ</div>
+      <div class="img-row">${t.images.map(src=>`<img class="img-thumb" src="${src}" data-lightbox="1">`).join('')}</div>
+    </div>` : ''}
+
+    <div class="detail-actions">
+      <button class="btn btn-sm" data-edit="${t.id}">แก้ไข</button>
+      <button class="btn btn-sm" data-pdf="${t.id}">📄 บันทึกเป็น PDF</button>
+      <button class="btn btn-sm btn-danger" data-del="${t.id}">ลบรายการนี้</button>
+    </div>
+  `;
+}
+
+/* ============================================================
+   INSIGHT ENGINE
+============================================================ */
+async function buildInsight(){
+  // Load full trade data (summaries only have limited fields)
+  const fullTrades = (await Promise.all(trades.map(t=>loadFull(t.id)))).filter(Boolean);
+  const wins  = fullTrades.filter(t=>parseFloat(t.pnl)>0);
+  const losses = fullTrades.filter(t=>parseFloat(t.pnl)<0);
+  const total = fullTrades.length;
+
+  if(total === 0){
+    document.getElementById('insightBody').innerHTML =
+      `<div class="ins-empty">ยังไม่มีข้อมูลไม้เพียงพอ — กรอกไม้แรกแล้วกลับมาดู Insight ครับ</div>`;
+    return;
+  }
+
+  // --- frequency counter helpers ---
+  function freq(tradeList, getter){
+    const map = {};
+    tradeList.forEach(t=>{
+      const vals = getter(t);
+      (Array.isArray(vals)?vals:[vals]).forEach(v=>{
+        if(v) map[v] = (map[v]||0)+1;
+      });
+    });
+    return Object.entries(map).sort((a,b)=>b[1]-a[1]);
+  }
+
+  const winRate  = total ? Math.round((wins.length/total)*100) : 0;
+  const rrs = fullTrades.map(t=>parseFloat(t.rr)).filter(v=>!isNaN(v));
+  const avgRR = rrs.length ? (rrs.reduce((a,b)=>a+b,0)/rrs.length).toFixed(2) : null;
+  const netPnl = fullTrades.reduce((s,t)=>s+(parseFloat(t.pnl)||0),0);
+
+  // --- bar chart HTML ---
+  function barSection(label, entries, cls, maxN=6){
+    if(!entries.length) return '';
+    const top = entries.slice(0,maxN);
+    const maxVal = top[0][1];
+    return `<div class="ins-section-label">${label}</div>
+      ${top.map(([name,cnt])=>`
+        <div class="ins-bar-row">
+          <div class="ins-bar-label">${esc(name)}</div>
+          <div class="ins-bar-wrap"><div class="ins-bar-fill ${cls}" style="width:${Math.round((cnt/maxVal)*100)}%"></div></div>
+          <div class="ins-bar-count">${cnt}ไม้</div>
+        </div>`).join('')}`;
+  }
+
+  function psychChips(tradeList, cls){
+    const f = freq(tradeList, t=>t.psychDuring||[]);
+    const before = freq(tradeList, t=>t.psychBefore?[t.psychBefore]:[]);
+    const all = [...before,...f].slice(0,8);
+    if(!all.length) return '<span style="color:var(--text-faint);font-size:13px;">— ไม่มีข้อมูล —</span>';
+    return `<div class="ins-psych-row">${all.map(([v,c])=>`<span class="ins-psych-chip ${cls}">${esc(v)} ×${c}</span>`).join('')}</div>`;
+  }
+
+  function insCol(tradeList, cls, label){
+    const n = tradeList.length;
+    if(!n) return `<div class="ins-col">
+      <div class="ins-col-title ${cls}"><span class="ins-badge ${cls}"></span>${label} (${n} ไม้)</div>
+      <div style="color:var(--text-faint);font-size:13px;">ยังไม่มีข้อมูล</div></div>`;
+
+    const trendF    = freq(tradeList, t=>t.trend||[]);
+    const posF      = freq(tradeList, t=>t.pricePosition||[]);
+    const styleF    = freq(tradeList, t=>t.tradeStyle?[t.tradeStyle]:[]);
+    const expectF   = freq(tradeList, t=>t.expectation||[]);
+    const triggerF  = freq(tradeList, t=>t.trigger||[]);
+    const exitF     = freq(tradeList, t=>t.exitReason||[]);
+
+    return `<div class="ins-col">
+      <div class="ins-col-title ${cls}"><span class="ins-badge ${cls}"></span>${label} (${n} ไม้)</div>
+      ${barSection('แนวโน้ม', trendF, cls)}
+      ${barSection('ตำแหน่งราคา', posF, cls)}
+      ${barSection('ลักษณะไม้', styleF, cls)}
+      ${barSection('สิ่งที่คาดหวัง', expectF, cls)}
+      ${barSection('Entry Confirmation', triggerF, cls)}
+      ${barSection('Exit Reason', exitF, cls)}
+      <div class="ins-section-label">อารมณ์ที่พบบ่อย</div>
+      ${psychChips(tradeList, cls)}
+    </div>`;
+  }
+
+  // --- assemble page ---
+  document.getElementById('insightBody').innerHTML = `
+    <div class="insight-summary">
+      <div class="ins-stat"><div class="ins-stat-l">ไม้ทั้งหมด</div><div class="ins-stat-v">${total}</div></div>
+      <div class="ins-stat"><div class="ins-stat-l">Win Rate</div><div class="ins-stat-v" style="color:${winRate>=50?'var(--green)':'var(--red)'}">${winRate}%</div></div>
+      <div class="ins-stat"><div class="ins-stat-l">RR เฉลี่ย</div><div class="ins-stat-v">${avgRR?fmtRR(avgRR):'—'}</div></div>
+      <div class="ins-stat"><div class="ins-stat-l">กำไร/ขาดทุนสุทธิ</div><div class="ins-stat-v" style="color:${netPnl>=0?'var(--green)':'var(--red)'}">${netPnl>=0?'+':''}${netPnl.toFixed(2)}</div></div>
+    </div>
+
+    <div style="background:var(--amber-soft); border:1px solid var(--amber); border-radius:10px; padding:14px 18px; margin-bottom:22px; font-size:13.5px; line-height:1.9;">
+      <b style="color:var(--amber);">🎯 สรุปภาพรวม</b><br>
+      ${wins.length?`ไม้ที่ <b style="color:var(--green)">ชนะ</b> มักเกิดตอน <b>${(freq(wins,t=>t.trend||[])[0]||['ไม่ระบุ'])[0]}</b>
+        ที่ตำแหน่ง <b>${(freq(wins,t=>t.pricePosition||[])[0]||['ไม่ระบุ'])[0]}</b>
+        คาดหวัง <b>${(freq(wins,t=>t.expectation||[])[0]||['ไม่ระบุ'])[0]}</b>
+        โดยมี Confirmation <b>${(freq(wins,t=>t.trigger||[])[0]||['ไม่ระบุ'])[0]}</b>`:''}
+      ${wins.length && losses.length?'<br>':''}
+      ${losses.length?`ไม้ที่ <b style="color:var(--red)">แพ้</b> มักเกิดตอน <b>${(freq(losses,t=>t.trend||[])[0]||['ไม่ระบุ'])[0]}</b>
+        คาดหวัง <b>${(freq(losses,t=>t.expectation||[])[0]||['ไม่ระบุ'])[0]}</b>
+        ออกด้วยเหตุผล <b>${(freq(losses,t=>t.exitReason||[])[0]||['ไม่ระบุ'])[0]}</b>`:''}
+      ${(()=>{
+        const wWith  = fullTrades.filter(t=>t.tradeStyle==='ตามเทรนด์');
+        const wAgainst = fullTrades.filter(t=>t.tradeStyle==='สวนเทรนด์');
+        if(!wWith.length && !wAgainst.length) return '';
+        const wr = arr=> arr.length ? Math.round(arr.filter(t=>parseFloat(t.pnl)>0).length/arr.length*100) : null;
+        const wWith_wr = wr(wWith), wAgainst_wr = wr(wAgainst);
+        return `<br>ลักษณะไม้: <b style="color:var(--green)">ตามเทรนด์</b> ${wWith.length} ไม้ Win Rate <b>${wWith_wr!==null?wWith_wr+'%':'—'}</b>
+          &nbsp;|&nbsp; <b style="color:var(--amber)">สวนเทรนด์</b> ${wAgainst.length} ไม้ Win Rate <b>${wAgainst_wr!==null?wAgainst_wr+'%':'—'}</b>`;
+      })()}
+    </div>
+
+    <div class="insight-cols">
+      ${insCol(wins,'win','✅ ไม้ที่ชนะ')}
+      ${insCol(losses,'loss','❌ ไม้ที่แพ้')}
+    </div>
+  `;
+}
+
+function openInsight(){
+  document.getElementById('insightOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('insightBody').innerHTML =
+    `<div class="ins-empty" style="padding:60px 20px;">กำลังวิเคราะห์ข้อมูล...</div>`;
+  buildInsight();
+}
+function closeInsight(){
+  document.getElementById('insightOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+/* ============================================================
+   PDF EXPORT (browser print -> Save as PDF)
+============================================================ */
+function printChipRow(title, items){
+  if(!items || !items.length) return '';
+  return `<div style="margin-bottom:14px;">
+    <div style="font-size:10.5px; letter-spacing:.1em; color:#8a93a0; text-transform:uppercase; margin-bottom:6px;">${esc(title)}</div>
+    <div>${items.map(v=>`<span style="display:inline-block; border:1px solid #d6dbe2; border-radius:99px; padding:3px 11px; font-size:12px; margin:0 6px 6px 0; color:#16243a;">${esc(v)}</span>`).join('')}</div>
+  </div>`;
+}
+
+function printableHtml(t){
+  const pnlNum = parseFloat(t.pnl);
+  const pnlColor = pnlNum>0 ? '#1a7a4c' : (pnlNum<0 ? '#b3261e' : '#16243a');
+  const sideColor = t.side==='buy' ? '#1a7a4c' : '#b3261e';
+
+  return `
+    <div style="font-family:'Noto Sans Thai',sans-serif; color:#16243a; max-width:780px; margin:0 auto; padding:28px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:2px solid #16243a; padding-bottom:14px; margin-bottom:18px;">
+        <div>
+          <div style="font-size:11px; letter-spacing:.25em; color:#8a93a0; text-transform:uppercase;">ดีดนิ้ว TRADER JOURNAL</div>
+          <div style="font-size:25px; font-weight:700; margin-top:4px;">${esc(t.asset)||'-'} <span style="font-size:14px; font-weight:700; color:${sideColor};">${t.side==='buy'?'BUY':'SELL'}</span></div>
+          <div style="font-size:13px; color:#666; margin-top:3px;">${fmtDate(t.date)}</div>
+        </div>
+        <div style="text-align:right; font-size:13px; line-height:1.7;">
+          <div>กำไร/ขาดทุน: <b style="color:${pnlColor}">${isNaN(pnlNum)?'-':(pnlNum>=0?'+':'')+pnlNum}</b></div>
+          <div>RR: ${fmtRR(t.rr)}</div>
+        </div>
+      </div>
+
+      <table style="width:100%; border-collapse:collapse; font-size:13px; margin-bottom:20px;">
+        <tr>
+          <td style="padding:4px 10px 4px 0; color:#8a93a0; white-space:nowrap;">ราคาเข้า</td><td style="padding:4px 18px 4px 0;">${esc(t.entryPrice)||'-'}</td>
+          <td style="padding:4px 10px 4px 0; color:#8a93a0; white-space:nowrap;">Stop Loss</td><td style="padding:4px 18px 4px 0;">${esc(t.slPrice)||'-'}</td>
+          <td style="padding:4px 10px 4px 0; color:#8a93a0; white-space:nowrap;">ราคาออก</td><td style="padding:4px;">${esc(t.exitPrice)||'-'}</td>
+        </tr>
+        <tr>
+          <td style="padding:4px 10px 4px 0; color:#8a93a0; white-space:nowrap;">Lot Size</td><td style="padding:4px 18px 4px 0;">${esc(t.lot)||'-'}</td>
+          <td style="padding:4px 10px 4px 0; color:#8a93a0; white-space:nowrap;"></td><td style="padding:4px 18px 4px 0;"></td>
+          <td style="padding:4px 10px 4px 0; color:#8a93a0; white-space:nowrap;"></td><td style="padding:4px;"></td>
+        </tr>
+      </table>
+
+      ${printChipRow('ภาพรวมตลาด', [...(t.trend||[]),...(t.pricePosition||[]),...(t.expectation||[])])}
+      ${printChipRow('Entry Confirmation', t.trigger||[])}
+
+      <div style="margin-bottom:16px;">
+        <div style="font-size:10.5px; letter-spacing:.1em; color:#8a93a0; text-transform:uppercase; margin-bottom:6px;">Narrative</div>
+        <div style="border-left:3px solid #16243a; background:#f6f8fa; padding:11px 15px; font-size:13px; line-height:1.75; white-space:pre-wrap;">${esc(t.narrative)||'-'}</div>
+      </div>
+
+      <div style="margin-bottom:16px; font-size:13px; line-height:1.8;">
+        <div style="font-size:10.5px; letter-spacing:.1em; color:#8a93a0; text-transform:uppercase; margin-bottom:6px;">Psychology</div>
+        ${t.psychBefore?`<div>ก่อนเข้า: <b>${esc(t.psychBefore)}</b></div>`:''}
+        ${(t.psychDuring&&t.psychDuring.length)?`<div>ระหว่างถือ: ${t.psychDuring.map(v=>esc(v)).join(', ')}</div>`:''}
+      </div>
+
+      ${printChipRow('Exit Reason', t.exitReason||[])}
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px;">
+        <div><div style="font-size:10.5px; color:#8a93a0; margin-bottom:4px; text-transform:uppercase; letter-spacing:.1em;">สิ่งที่ทำได้ดี</div><div style="font-size:13px; line-height:1.6; white-space:pre-wrap;">${esc(t.lessonGood)||'-'}</div></div>
+        <div><div style="font-size:10.5px; color:#8a93a0; margin-bottom:4px; text-transform:uppercase; letter-spacing:.1em;">สิ่งที่พลาด</div><div style="font-size:13px; line-height:1.6; white-space:pre-wrap;">${esc(t.lessonMistake)||'-'}</div></div>
+      </div>
+
+      ${(t.images && t.images.length) ? `
+      <div>
+        <div style="font-size:10.5px; letter-spacing:.1em; color:#8a93a0; text-transform:uppercase; margin-bottom:10px;">รูปภาพประกอบ</div>
+        ${t.images.map(src=>`<img src="${src}" style="width:100%; max-width:724px; margin-bottom:16px; border:1px solid #e1e6ec; border-radius:6px; display:block; page-break-inside:avoid;">`).join('')}
+      </div>` : ''}
+    </div>
+  `;
+}
+
+function exportTradePDF(id){
+  loadFull(id).then(t=>{
+    if(!t){ showToast('ไม่พบข้อมูลไม้นี้'); return; }
+    const area = document.getElementById('printArea');
+    area.innerHTML = printableHtml(t);
+    const prevTitle = document.title;
+    document.title = `${t.asset||'trade'}-${t.date||''}`;
+    setTimeout(()=>{
+      window.print();
+      setTimeout(()=>{ document.title = prevTitle; }, 500);
+    }, 60);
+  });
+}
+
+/* ============================================================
+   MODAL / FORM
+============================================================ */
+function renderAccordion(){
+  const root = document.getElementById('accordionRoot');
+  root.innerHTML = ACC_SECTIONS.map((s,i)=>`
+    <div class="acc-section ${i===0?'open':''}" data-acc="${s.id}">
+      <div class="acc-head" data-acc-toggle="${s.id}">
+        <div class="acc-num">${s.num}</div>
+        <div class="acc-titles">
+          <div class="acc-title">${s.title}</div>
+          <div class="acc-sub">${s.sub}</div>
+        </div>
+        <svg class="acc-chev" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="acc-body"><div class="acc-body-inner">${sectionFields(s.id)}</div></div>
+    </div>
+  `).join('');
+
+  // open first section by default
+  const first = root.querySelector('.acc-body');
+  first.style.maxHeight = first.scrollHeight + 'px';
+}
+
+function chipGroup(name, options, selected, opts){
+  opts = opts || {};
+  const single = !!opts.single;
+  const cls = opts.violet ? ' violet' : '';
+  const sel = Array.isArray(selected) ? selected : (selected ? [selected] : []);
+  return `<div class="chip-grid" data-group="${name}" data-single="${single}" data-max="${opts.max||''}">
+    ${options.map(o=>`<button type="button" class="chip-opt${single?' single':''}${cls} ${sel.includes(o)?'sel':''}" data-val="${esc(o)}">${esc(o)}</button>`).join('')}
+  </div>`;
+}
+
+function sectionFields(id){
+  switch(id){
+    case 'trade': return `
+      <div class="field-row three">
+        <div class="field"><label>วันที่</label><input type="date" id="f_date" value="${form.date}"></div>
+        <div class="field"><label>สินทรัพย์</label><input type="text" id="f_asset" placeholder="เช่น XAUUSD, EURUSD" value="${esc(form.asset)}"></div>
+        <div class="field"><label>ทิศทาง</label>
+          <div class="side-toggle">
+            <button type="button" class="sel-buy ${form.side==='buy'?'active':''}" data-side="buy">BUY</button>
+            <button type="button" class="sel-sell ${form.side==='sell'?'active':''}" data-side="sell">SELL</button>
+          </div>
+        </div>
+      </div>
+      <div class="field-row three">
+        <div class="field"><label>ราคาเข้า</label><input type="number" step="any" id="f_entry" value="${form.entryPrice}"></div>
+        <div class="field"><label>Stop Loss</label><input type="number" step="any" id="f_sl" value="${form.slPrice}"></div>
+        <div class="field"><label>ราคาออก</label><input type="number" step="any" id="f_exit" value="${form.exitPrice}"></div>
+      </div>
+      <div class="field-row three">
+        <div class="field"><label>Lot Size</label><input type="number" step="any" id="f_lot" value="${form.lot}"></div>
+        <div class="field">
+          <label>Risk : Reward (RR) — คำนวณอัตโนมัติ</label>
+          <input type="text" id="f_rr" value="${form.rr ? fmtRR(form.rr) : ''}" readonly style="background:var(--bg-2); color:var(--amber); font-weight:700; cursor:not-allowed;">
+          <div class="help" id="rrCalcHelp">กรอกราคาเข้า, Stop Loss, ราคาออก เพื่อคำนวณอัตโนมัติ</div>
+        </div>
+        <div class="field"><label>กำไร/ขาดทุน</label><input type="number" step="any" id="f_pnl" value="${form.pnl}"></div>
+      </div>`;
+    case 'context': return `
+      <div class="field" style="margin-bottom:14px;"><label>แนวโน้ม</label>${chipGroup('trend',OPTS.trend,form.trend)}</div>
+      <div class="field" style="margin-bottom:14px;"><label>ตำแหน่งราคา</label>${chipGroup('pricePosition',OPTS.pricePosition,form.pricePosition)}</div>
+      <div class="field" style="margin-bottom:14px;"><label>ลักษณะไม้</label>${chipGroup('tradeStyle',OPTS.tradeStyle,form.tradeStyle?[form.tradeStyle]:[],{single:true})}</div>
+      <div class="field"><label>สิ่งที่คาดหวัง</label>${chipGroup('expectation',OPTS.expectation,form.expectation)}</div>`;
+    case 'trigger': return `
+      <div class="field">${chipGroup('trigger',OPTS.trigger,form.trigger)}</div>
+      <div class="help" id="triggerHelp">เลือกได้ไม่จำกัด (เลือกแล้ว ${form.trigger.length} ข้อ)</div>`;
+    case 'narrative': return `
+      <div class="field">
+        <textarea id="f_narrative" rows="7" placeholder="ตลาดกำลังทำอะไร / คาดว่าจะเกิดอะไร / อะไรสนับสนุนมุมมองนี้ / อะไรทำให้เข้า...">${esc(form.narrative)}</textarea>
+        <div class="help">เช่น: TF Day, 4H, 1H, 30M, 15M ลงเป็นเนื้อเดียวกัน แต่ราคาลงมาถึงแนวรับสำคัญและ TF 5M จบ Fibo จึงมองว่าควรมีการแยกตัวของ TF เล็กอย่างน้อยหนึ่งรอบ...</div>
+      </div>`;
+    case 'psych': return `
+      <div class="field" style="margin-bottom:14px;"><label>ก่อนเข้า</label>${chipGroup('psychBefore',OPTS.psychBefore, form.psychBefore?[form.psychBefore]:[], {single:true})}</div>
+      <div class="field"><label>ระหว่างถือ</label>${chipGroup('psychDuring',OPTS.psychDuring,form.psychDuring,{violet:true})}</div>`;
+    case 'exit': return `<div class="field">${chipGroup('exitReason',OPTS.exitReason, form.exitReason)}</div>`;
+    case 'lesson': return `
+      <div class="field-row">
+        <div class="field"><label>สิ่งที่ทำได้ดี</label><textarea id="f_lessonGood" rows="3">${esc(form.lessonGood)}</textarea></div>
+        <div class="field"><label>สิ่งที่พลาด</label><textarea id="f_lessonMistake" rows="3">${esc(form.lessonMistake)}</textarea></div>
+      </div>`;
+    case 'images': return `
+      <div class="upload-zone" id="uploadZone">คลิกเพื่อแนบภาพ หรือลากไฟล์มาวาง (รองรับหลายไฟล์)</div>
+      <input type="file" id="fileInput" accept="image/*" multiple style="display:none">
+      <div class="upload-preview" id="uploadPreview"></div>`;
+    default: return '';
+  }
+}
+
+function renderUploadPreview(){
+  const wrap = document.getElementById('uploadPreview');
+  if(!wrap) return;
+  wrap.innerHTML = form.images.map((src,i)=>`
+    <div class="upload-thumb">
+      <img src="${src}" data-lightbox="1">
+      <button type="button" class="edit-img" data-editimg="${i}" title="แก้ไข/วาดเส้น">✎</button>
+      <button type="button" class="rm" data-rmimg="${i}">&times;</button>
+    </div>`).join('');
+}
+
+function readFormPrimitives(){
+  const g = id => { const el = document.getElementById(id); return el ? el.value : ''; };
+  form.date = g('f_date') || form.date;
+  form.asset = g('f_asset');
+  form.lot = g('f_lot');
+  form.entryPrice = g('f_entry');
+  form.exitPrice = g('f_exit');
+  form.slPrice = g('f_sl');
+  form.pnl = g('f_pnl');
+  form.narrative = g('f_narrative');
+  form.lessonGood = g('f_lessonGood');
+  form.lessonMistake = g('f_lessonMistake');
+}
+
+function calcRR(){
+  const num = id => { const el = document.getElementById(id); const v = el ? parseFloat(el.value) : NaN; return v; };
+  const entry = num('f_entry');
+  const sl = num('f_sl');
+  const exit = num('f_exit');
+  const rrInput = document.getElementById('f_rr');
+  const help = document.getElementById('rrCalcHelp');
+  if(!rrInput) return;
+
+  if(!isNaN(entry) && !isNaN(sl) && !isNaN(exit) && entry !== sl){
+    const riskDist = Math.abs(entry - sl);
+    const rewardDist = Math.abs(exit - entry);
+    const rr = rewardDist / riskDist;
+    form.rr = rr.toFixed(2);
+    rrInput.value = fmtRR(form.rr);
+    if(help){
+      help.textContent = `เสี่ยง ${riskDist} แลกได้ ${rewardDist} ต่อไม้นี้`;
+      help.classList.remove('warn');
+    }
+  } else {
+    form.rr = '';
+    rrInput.value = '';
+    if(help){
+      help.textContent = 'กรอกราคาเข้า, Stop Loss, ราคาออก เพื่อคำนวณอัตโนมัติ';
+      help.classList.remove('warn');
+    }
+  }
+}
+
+function openModal(editTrade){
+  form = editTrade ? JSON.parse(JSON.stringify(editTrade)) : blankForm();
+  // Ensure every array field exists (older saved trades may be missing newer fields)
+  const arrayFields = ['trend','pricePosition','expectation','trigger','psychDuring','exitReason','images'];
+  arrayFields.forEach(f=>{ if(!Array.isArray(form[f])) form[f] = []; });
+  // Ensure string fields exist
+  const strFields = ['entryPrice','exitPrice','slPrice','lot','rr','pnl','narrative','psychBefore','lessonGood','lessonMistake','pointValue','balance','risk','tradeStyle'];
+  strFields.forEach(f=>{ if(form[f]==null) form[f]=''; });
+
+  editingId = editTrade ? editTrade.id : null;
+  modalDirty = false;
+  document.getElementById('modalTitle').textContent = editTrade ? 'แก้ไขบันทึกการเทรด' : 'บันทึกไม้ใหม่';
+  renderAccordion();
+  renderUploadPreview();
+  calcRR();
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(){
+  document.getElementById('modalOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+  modalDirty = false;
+}
+function markDirty(){ modalDirty = true; }
+function requestCloseModal(){
+  if(modalDirty){
+    const ok = confirm('ข้อมูลที่กำลังบันทึกยังไม่ถูกเซฟ ถ้าออกตอนนี้ข้อมูลทั้งหมดจะหายไป ต้องการออกจากหน้านี้ใช่หรือไม่?');
+    if(!ok) return;
+  }
+  closeModal();
+}
+
+async function saveTrade(){
+  readFormPrimitives();
+  if(!form.asset.trim()){
+    showToast('กรุณาระบุสินทรัพย์ก่อนบันทึก');
+    return;
+  }
+
+  const approxSize = JSON.stringify(form).length;
+  if(approxSize > 60000000){
+    showToast('ข้อมูล/รูปภาพมีขนาดใหญ่เกินไปมาก กรุณาลบบางรูปแล้วลองบันทึกใหม่');
+    return;
+  }
+
+  if(!form.id){
+    form.id = 'tr_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
+    form.createdAt = Date.now();
+  }
+
+  const saveBtn = document.getElementById('saveBtn');
+  saveBtn.disabled = true;
+  const originalLabel = saveBtn.textContent;
+  saveBtn.textContent = 'กำลังบันทึก...';
+
+  try{
+    const okFull = await saveFull(form);
+    if(!okFull){
+      showToast('บันทึกไม่สำเร็จ ลองอีกครั้ง หรือลองลดจำนวน/ขนาดรูปภาพ');
+      return;
+    }
+    const idx = trades.findIndex(t=>t.id===form.id);
+    const summary = toSummary(form);
+    if(idx>=0) trades[idx] = summary; else trades.push(summary);
+    const okIndex = await saveIndex();
+    if(!okIndex){
+      showToast('บันทึกไม้นี้สำเร็จ แต่อัปเดตรายการสรุปไม่สำเร็จ ลองรีเฟรชหน้า');
+    }
+    modalDirty = false;
+    closeModal();
+    renderStats();
+    renderTimeline();
+    showToast(editingId ? 'อัปเดตบันทึกเรียบร้อย' : 'บันทึกเรื่องราวไม้นี้แล้ว');
+  } catch(err){
+    console.error('saveTrade error', err);
+    showToast('เกิดข้อผิดพลาดระหว่างบันทึก ลองอีกครั้ง');
+  } finally{
+    saveBtn.disabled = false;
+    saveBtn.textContent = originalLabel;
+  }
+}
+
+async function deleteTrade(id){
+  trades = trades.filter(t=>t.id!==id);
+  await saveIndex();
+  await deleteFull(id);
+  renderStats();
+  renderTimeline();
+  showToast('ลบรายการแล้ว');
+}
+
+/* ============================================================
+   TOAST / LIGHTBOX
+============================================================ */
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2400);
+}
+
+function openLightbox(src){
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightbox').classList.remove('hidden');
+}
+function closeLightbox(){
+  document.getElementById('lightbox').classList.add('hidden');
+}
+
+/* ============================================================
+   IMAGE HANDLING
+============================================================ */
+function resizeImage(file){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = e=>{
+      const img = new Image();
+      img.onload = ()=>{
+        const maxW = 1100;
+        const scale = Math.min(1, maxW/img.width);
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width*scale;
+        canvas.height = img.height*scale;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img,0,0,canvas.width,canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', 0.72));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+/* ============================================================
+   IMAGE ANNOTATOR (pen / line / arrow / rect / text)
+============================================================ */
+function annGetPos(e){
+  const canvas = annState.canvas;
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  return {
+    x: (e.clientX - rect.left) * scaleX,
+    y: (e.clientY - rect.top) * scaleY,
+    screenX: e.clientX - rect.left,
+    screenY: e.clientY - rect.top
+  };
+}
+
+function annDrawArrow(ctx, x1, y1, x2, y2, color, width){
+  ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = width;
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  const angle = Math.atan2(y2-y1, x2-x1);
+  const headLen = Math.max(12, width*3.4);
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - headLen*Math.cos(angle - Math.PI/7), y2 - headLen*Math.sin(angle - Math.PI/7));
+  ctx.lineTo(x2 - headLen*Math.cos(angle + Math.PI/7), y2 - headLen*Math.sin(angle + Math.PI/7));
+  ctx.closePath();
+  ctx.fill();
+}
+
+function annPushUndo(){
+  if(!annState.canvas) return;
+  annState.history.push({
+    canvasDataURL: annState.canvas.toDataURL('image/png'),
+    textLayers: JSON.parse(JSON.stringify(annState.textLayers))
+  });
+  if(annState.history.length > 25) annState.history.shift();
+}
+
+function annUndo(){
+  if(!annState.history.length){ showToast('ไม่มีขั้นตอนให้ย้อนกลับแล้ว'); return; }
+  const last = annState.history.pop();
+  const img = new Image();
+  img.onload = ()=>{
+    annState.ctx.clearRect(0,0,annState.canvas.width, annState.canvas.height);
+    annState.ctx.drawImage(img,0,0);
+  };
+  img.src = last.canvasDataURL;
+  annState.textLayers = last.textLayers;
+  renderTextLayers();
+}
+
+function annClearAll(){
+  if(!annState.originalImg) return;
+  annPushUndo();
+  annState.ctx.clearRect(0,0,annState.canvas.width, annState.canvas.height);
+  annState.ctx.drawImage(annState.originalImg,0,0);
+  annState.textLayers = [];
+  renderTextLayers();
+}
+
+// canvas-internal <-> on-screen (wrap-relative) coordinate helpers, since the
+// canvas is displayed scaled/centered inside .annotator-canvas-wrap
+function annCanvasRectOffset(){
+  const wrap = document.querySelector('.annotator-canvas-wrap');
+  const wrapRect = wrap.getBoundingClientRect();
+  const canvasRect = annState.canvas.getBoundingClientRect();
+  return {
+    offsetX: canvasRect.left - wrapRect.left,
+    offsetY: canvasRect.top - wrapRect.top,
+    displayScale: canvasRect.width / annState.canvas.width
+  };
+}
+
+function renderTextLayers(){
+  const wrap = document.querySelector('.annotator-canvas-wrap');
+  if(!wrap || !annState.canvas) return;
+  wrap.querySelectorAll('.ann-text-layer').forEach(el=>el.remove());
+  const o = annCanvasRectOffset();
+
+  annState.textLayers.forEach(layer=>{
+    const el = document.createElement('div');
+    el.className = 'ann-text-layer';
+    el.dataset.id = layer.id;
+    el.textContent = layer.text;
+    el.style.left = (o.offsetX + layer.x*o.displayScale) + 'px';
+    el.style.top = (o.offsetY + (layer.y - layer.fontPx*0.65)*o.displayScale) + 'px';
+    el.style.fontSize = (layer.fontPx*o.displayScale) + 'px';
+    el.style.color = layer.color;
+
+    const del = document.createElement('button');
+    del.type = 'button';
+    del.className = 'ann-text-del';
+    del.innerHTML = '&times;';
+    del.addEventListener('pointerdown', ev=> ev.stopPropagation());
+    del.addEventListener('click', ev=>{
+      ev.stopPropagation();
+      annPushUndo();
+      annState.textLayers = annState.textLayers.filter(l=>l.id!==layer.id);
+      renderTextLayers();
+    });
+    el.appendChild(del);
+
+    el.addEventListener('pointerdown', ev=>{
+      if(ev.target===del) return;
+      ev.preventDefault(); ev.stopPropagation();
+      el.setPointerCapture(ev.pointerId);
+      el.classList.add('dragging');
+      const startClientX = ev.clientX, startClientY = ev.clientY;
+      const startLeft = parseFloat(el.style.left), startTop = parseFloat(el.style.top);
+      let moved = false, pushedUndo = false;
+
+      const onMove = mv=>{
+        const dx = mv.clientX-startClientX, dy = mv.clientY-startClientY;
+        if(Math.abs(dx)>3 || Math.abs(dy)>3) moved = true;
+        if(moved && !pushedUndo){ annPushUndo(); pushedUndo = true; }
+        if(moved){
+          el.style.left = (startLeft+dx)+'px';
+          el.style.top = (startTop+dy)+'px';
+        }
+      };
+      const onUp = ()=>{
+        el.removeEventListener('pointermove', onMove);
+        el.removeEventListener('pointerup', onUp);
+        el.classList.remove('dragging');
+        if(moved){
+          const oo = annCanvasRectOffset();
+          const newLeft = parseFloat(el.style.left), newTop = parseFloat(el.style.top);
+          layer.x = (newLeft - oo.offsetX) / oo.displayScale;
+          layer.y = (newTop - oo.offsetY) / oo.displayScale + layer.fontPx*0.65;
+        } else {
+          annOpenTextEditor(layer);
+        }
+      };
+      el.addEventListener('pointermove', onMove);
+      el.addEventListener('pointerup', onUp);
+    });
+
+    wrap.appendChild(el);
+  });
+}
+
+function annOpenTextEditor(existingLayer, posIfNew){
+  const wrap = document.querySelector('.annotator-canvas-wrap');
+  const old = wrap.querySelector('.ann-text-input');
+  if(old) old.remove();
+
+  const o = annCanvasRectOffset();
+  const fontPx = existingLayer ? existingLayer.fontPx : (14 + annState.size*2) / o.displayScale;
+  const color = existingLayer ? existingLayer.color : annState.color;
+  const canvasX = existingLayer ? existingLayer.x : posIfNew.x;
+  const canvasY = existingLayer ? existingLayer.y : posIfNew.y;
+  const screenLeft = o.offsetX + canvasX*o.displayScale;
+  const screenTop = o.offsetY + (canvasY - fontPx*0.65)*o.displayScale;
+
+  // hide the live layer element while editing so it doesn't show twice
+  if(existingLayer){
+    const liveEl = wrap.querySelector(`.ann-text-layer[data-id="${existingLayer.id}"]`);
+    if(liveEl) liveEl.style.visibility = 'hidden';
+  }
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'ann-text-input';
+  input.value = existingLayer ? existingLayer.text : '';
+  input.style.left = screenLeft + 'px';
+  input.style.top = screenTop + 'px';
+  input.style.color = color;
+  input.style.fontSize = (fontPx*o.displayScale) + 'px';
+  wrap.appendChild(input);
+  input.focus();
+  input.select();
+
+  let committed = false;
+  const commit = ()=>{
+    if(committed) return;
+    committed = true;
+    const val = input.value.trim();
+    input.remove();
+
+    if(existingLayer){
+      if(!val){
+        annPushUndo();
+        annState.textLayers = annState.textLayers.filter(l=>l.id!==existingLayer.id);
+      } else if(val !== existingLayer.text){
+        annPushUndo();
+        existingLayer.text = val;
+      }
+    } else if(val){
+      annPushUndo();
+      annState.textLayers.push({ id:'tl'+(annState.textIdSeq++), text:val, x:canvasX, y:canvasY, color, fontPx });
+    }
+    renderTextLayers();
+  };
+  input.addEventListener('blur', commit);
+  input.addEventListener('keydown', ev=>{
+    if(ev.key==='Enter'){ ev.preventDefault(); input.blur(); }
+    if(ev.key==='Escape'){ input.value = existingLayer ? existingLayer.text : ''; input.blur(); }
+  });
+}
+
+function annPointerDown(e){
+  if(!annState.canvas) return;
+  e.preventDefault();
+  try{ annState.canvas.setPointerCapture(e.pointerId); }catch(err){}
+  const pos = annGetPos(e);
+
+  if(annState.tool === 'text'){
+    annOpenTextEditor(null, pos);
+    return;
+  }
+
+  annPushUndo();
+  annState.drawing = true;
+  annState.startX = pos.x; annState.startY = pos.y;
+
+  const ctx = annState.ctx;
+  if(annState.tool === 'pen'){
+    ctx.strokeStyle = annState.color; ctx.lineWidth = annState.size;
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(pos.x, pos.y);
+  } else {
+    annState.baseImageData = ctx.getImageData(0,0,annState.canvas.width, annState.canvas.height);
+  }
+}
+
+function annPointerMove(e){
+  if(!annState.drawing) return;
+  const ctx = annState.ctx;
+  const pos = annGetPos(e);
+
+  if(annState.tool === 'pen'){
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+  } else if(annState.tool === 'line'){
+    ctx.putImageData(annState.baseImageData, 0, 0);
+    ctx.strokeStyle = annState.color; ctx.lineWidth = annState.size; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(annState.startX, annState.startY); ctx.lineTo(pos.x, pos.y); ctx.stroke();
+  } else if(annState.tool === 'arrow'){
+    ctx.putImageData(annState.baseImageData, 0, 0);
+    annDrawArrow(ctx, annState.startX, annState.startY, pos.x, pos.y, annState.color, annState.size);
+  } else if(annState.tool === 'rect'){
+    ctx.putImageData(annState.baseImageData, 0, 0);
+    ctx.strokeStyle = annState.color; ctx.lineWidth = annState.size; ctx.lineJoin = 'round';
+    ctx.strokeRect(annState.startX, annState.startY, pos.x-annState.startX, pos.y-annState.startY);
+  }
+}
+
+function annPointerUp(){
+  if(!annState.drawing) return;
+  annState.drawing = false;
+  if(annState.tool === 'pen') annState.ctx.closePath();
+}
+
+function openAnnotator(idx){
+  if(idx==null || !form.images[idx]) return;
+  annState.editingIndex = idx;
+  annState.history = [];
+  annState.textLayers = [];
+  annState.tool = 'pen';
+  annState.color = '#FF6B5B';
+  annState.size = 4;
+
+  document.querySelectorAll('#annToolGroup .ann-tool').forEach(b=>b.classList.toggle('active', b.dataset.tool==='pen'));
+  document.querySelectorAll('#annColorGroup .ann-color').forEach(b=>b.classList.toggle('active', b.dataset.color==='#FF6B5B'));
+  document.getElementById('annColorPicker').value = '#FF6B5B';
+  document.getElementById('annSize').value = 4;
+
+  document.getElementById('annotatorOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+
+  const canvas = document.getElementById('annotatorCanvas');
+  const ctx = canvas.getContext('2d');
+  annState.canvas = canvas; annState.ctx = ctx;
+
+  const img = new Image();
+  img.onload = ()=>{
+    canvas.width = img.width;
+    canvas.height = img.height;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(img,0,0);
+    annState.originalImg = img;
+    renderTextLayers();
+  };
+  img.src = form.images[idx];
+}
+
+function closeAnnotator(){
+  document.getElementById('annotatorOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+  annState.editingIndex = null;
+  annState.history = [];
+  annState.textLayers = [];
+  annState.drawing = false;
+  const wrap = document.querySelector('.annotator-canvas-wrap');
+  if(wrap){
+    wrap.querySelectorAll('.ann-text-input, .ann-text-layer').forEach(el=>el.remove());
+  }
+}
+
+function annSaveAndClose(){
+  if(annState.editingIndex===null || !annState.canvas) return;
+  const ctx = annState.ctx;
+  annState.textLayers.forEach(layer=>{
+    ctx.fillStyle = layer.color;
+    ctx.font = `600 ${layer.fontPx}px 'Noto Sans Thai', sans-serif`;
+    ctx.textBaseline = 'top';
+    ctx.fillText(layer.text, layer.x, layer.y - layer.fontPx*0.65);
+  });
+  const dataUrl = annState.canvas.toDataURL('image/jpeg', 0.80);
+  form.images[annState.editingIndex] = dataUrl;
+  markDirty();
+  renderUploadPreview();
+  closeAnnotator();
+  showToast('บันทึกการแก้ไขรูปแล้ว');
+}
+
+window.addEventListener('resize', ()=>{
+  const overlay = document.getElementById('annotatorOverlay');
+  if(overlay && !overlay.classList.contains('hidden')) renderTextLayers();
+});
+
+/* ============================================================
+   EVENTS
+============================================================ */
+document.getElementById('newEntryBtn').addEventListener('click', ()=>openModal(null));
+document.getElementById('emptyNewBtn').addEventListener('click', ()=>openModal(null));
+document.getElementById('modalClose').addEventListener('click', requestCloseModal);
+document.getElementById('cancelBtn').addEventListener('click', requestCloseModal);
+document.getElementById('saveBtn').addEventListener('click', saveTrade);
+document.getElementById('modalOverlay').addEventListener('click', e=>{ if(e.target.id==='modalOverlay') requestCloseModal(); });
+document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+document.getElementById('insightBtn').addEventListener('click', openInsight);
+document.getElementById('insightClose').addEventListener('click', closeInsight);
+document.getElementById('insightOverlay').addEventListener('click', e=>{ if(e.target.id==='insightOverlay') closeInsight(); });
+document.getElementById('lightbox').addEventListener('click', e=>{ if(e.target.id==='lightbox') closeLightbox(); });
+
+// annotator toolbar
+document.getElementById('annToolGroup').addEventListener('click', e=>{
+  const btn = e.target.closest('.ann-tool');
+  if(!btn) return;
+  annState.tool = btn.dataset.tool;
+  document.querySelectorAll('#annToolGroup .ann-tool').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+});
+document.getElementById('annColorGroup').addEventListener('click', e=>{
+  const btn = e.target.closest('.ann-color');
+  if(!btn) return;
+  annState.color = btn.dataset.color;
+  document.querySelectorAll('#annColorGroup .ann-color').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('annColorPicker').value = btn.dataset.color;
+});
+document.getElementById('annColorPicker').addEventListener('input', e=>{
+  annState.color = e.target.value;
+  document.querySelectorAll('#annColorGroup .ann-color').forEach(b=>b.classList.remove('active'));
+});
+document.getElementById('annSize').addEventListener('input', e=>{ annState.size = parseInt(e.target.value); });
+document.getElementById('annUndo').addEventListener('click', annUndo);
+document.getElementById('annClear').addEventListener('click', annClearAll);
+document.getElementById('annCancel').addEventListener('click', closeAnnotator);
+document.getElementById('annSave').addEventListener('click', annSaveAndClose);
+
+const annotatorCanvasEl = document.getElementById('annotatorCanvas');
+annotatorCanvasEl.addEventListener('pointerdown', annPointerDown);
+annotatorCanvasEl.addEventListener('pointermove', annPointerMove);
+annotatorCanvasEl.addEventListener('pointerup', annPointerUp);
+annotatorCanvasEl.addEventListener('pointercancel', annPointerUp);
+
+document.getElementById('searchInput').addEventListener('input', e=>{ searchTerm = e.target.value; renderTimeline(); });
+document.querySelectorAll('#resultFilter button').forEach(b=>b.addEventListener('click', ()=>{
+  document.querySelectorAll('#resultFilter button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); activeResultFilter = b.dataset.v; renderTimeline();
+}));
+document.querySelectorAll('#sideFilter button').forEach(b=>b.addEventListener('click', ()=>{
+  document.querySelectorAll('#sideFilter button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); activeSideFilter = b.dataset.v; renderTimeline();
+}));
+
+// timeline delegated events
+document.getElementById('timeline').addEventListener('click', async (e)=>{
+  const head = e.target.closest('[data-toggle]');
+  if(head){
+    const card = head.closest('.entry-card');
+    openCard(card);
+    return;
+  }
+  const editBtn = e.target.closest('[data-edit]');
+  if(editBtn){
+    const full = await loadFull(editBtn.dataset.edit);
+    if(full) openModal(full);
+    return;
+  }
+  const pdfBtn = e.target.closest('[data-pdf]');
+  if(pdfBtn){
+    exportTradePDF(pdfBtn.dataset.pdf);
+    return;
+  }
+  const delBtn = e.target.closest('[data-del]');
+  if(delBtn){
+    if(confirm('ลบบันทึกการเทรดนี้ใช่หรือไม่? การลบไม่สามารถย้อนกลับได้')){
+      deleteTrade(delBtn.dataset.del);
+    }
+    return;
+  }
+  const img = e.target.closest('[data-lightbox]');
+  if(img){ openLightbox(img.src); return; }
+});
+
+// accordion delegated events
+document.getElementById('accordionRoot').addEventListener('click', (e)=>{
+  const toggle = e.target.closest('[data-acc-toggle]');
+  if(toggle){
+    const section = toggle.closest('.acc-section');
+    const body = section.querySelector('.acc-body');
+    const isOpen = section.classList.contains('open');
+    section.classList.toggle('open');
+    body.style.maxHeight = isOpen ? null : body.scrollHeight + 'px';
+    return;
+  }
+
+  const sideBtn = e.target.closest('[data-side]');
+  if(sideBtn){
+    form.side = sideBtn.dataset.side;
+    sideBtn.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
+    sideBtn.classList.add('active');
+    markDirty();
+    return;
+  }
+
+  const chip = e.target.closest('.chip-opt');
+  if(chip){
+    const group = chip.closest('[data-group]');
+    const name = group.dataset.group;
+    const single = group.dataset.single === 'true';
+    const max = parseInt(group.dataset.max)||0;
+    const val = chip.dataset.val;
+
+    if(single){
+      form[name] = chip.classList.contains('sel') ? '' : val;
+      group.querySelectorAll('.chip-opt').forEach(c=>c.classList.remove('sel'));
+      if(form[name]) chip.classList.add('sel');
+    } else {
+      const arr = form[name];
+      const i = arr.indexOf(val);
+      if(i>=0){
+        arr.splice(i,1);
+        chip.classList.remove('sel');
+      } else {
+        if(max && arr.length>=max){
+          showToast(`เลือกได้สูงสุด ${max} ข้อ`);
+        } else {
+          arr.push(val);
+          chip.classList.add('sel');
+        }
+      }
+      if(name==='trigger'){
+        const help = document.getElementById('triggerHelp');
+        if(help) help.textContent = `เลือกได้ไม่จำกัด (เลือกแล้ว ${form.trigger.length} ข้อ)`;
+      }
+    }
+    markDirty();
+    // keep accordion height in sync
+    const body = chip.closest('.acc-body');
+    if(body) body.style.maxHeight = body.scrollHeight + 'px';
+    return;
+  }
+
+  const uploadZone = e.target.closest('#uploadZone');
+  if(uploadZone){ document.getElementById('fileInput').click(); return; }
+
+  const editImg = e.target.closest('[data-editimg]');
+  if(editImg){
+    openAnnotator(parseInt(editImg.dataset.editimg));
+    return;
+  }
+
+  const thumbImg = e.target.closest('.upload-thumb img[data-lightbox]');
+  if(thumbImg){ openLightbox(thumbImg.src); return; }
+
+  const rmImg = e.target.closest('[data-rmimg]');
+  if(rmImg){
+    form.images.splice(parseInt(rmImg.dataset.rmimg),1);
+    markDirty();
+    renderUploadPreview();
+    const body = rmImg.closest('.acc-body');
+    if(body) body.style.maxHeight = body.scrollHeight + 'px';
+    return;
+  }
+});
+
+document.getElementById('accordionRoot').addEventListener('change', async (e)=>{
+  if(e.target.id === 'fileInput'){
+    const files = Array.from(e.target.files);
+    for(const f of files){
+      try{
+        const dataUrl = await resizeImage(f);
+        form.images.push(dataUrl);
+      }catch(err){ console.error(err); }
+    }
+    markDirty();
+    renderUploadPreview();
+    e.target.value = '';
+    const body = document.getElementById('uploadPreview')?.closest('.acc-body');
+    if(body) body.style.maxHeight = body.scrollHeight + 'px';
+  }
+});
+
+const RR_CALC_FIELDS = ['f_entry','f_sl','f_exit'];
+document.getElementById('accordionRoot').addEventListener('input', (e)=>{
+  markDirty();
+  if(RR_CALC_FIELDS.includes(e.target.id)) calcRR();
+});
+
+/* ============================================================
+   INIT
+============================================================ */
+async function init(){
+  try{
+    await loadIndex();
+  }catch(e){ console.error(e); }
+  renderStats();
+  renderTimeline();
+}
+init();
+</script>
+</body>
+</html>
